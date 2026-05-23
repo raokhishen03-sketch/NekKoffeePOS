@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.nekkoffee.controller.MainMenuController"
+            stylesheets="@../css/styles.css" styleClass="main-container">
+
+    <left>
+        <VBox spacing="15" styleClass="sidebar" prefWidth="220">
+            <padding>
+                <Insets top="30" right="15" bottom="30" left="15"/>
+            </padding>
+            <Label text="NekKoffee" styleClass="sidebar-brand"/>
+            <Separator styleClass="sidebar-divider"/>
+            <Button text="New Order" fx:id="btnOrder" maxWidth="Infinity" styleClass="sidebar-btn, active-btn" onAction="#handleNavOrder"/>
+            <Button text="Inventory" fx:id="btnInventory" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Button text="Sales History" fx:id="btnSales" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Region VBox.vgrow="ALWAYS"/>
+            <Button text="Logout" styleClass="sidebar-btn-logout"/>
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contentArea" styleClass="content-pane">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <Label text="Welcome to NekKoffee POS. Select an option from the sidebar." styleClass="welcome-text"/>
+        </StackPane>
+    </center>
+</BorderPane>
