@@ -6,11 +6,13 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
+import javafx.scene.layout.BorderPane;
 
 public class MainMenuController {
 
     @FXML private StackPane contentArea;
     @FXML private Button btnOrder;
+    @FXML private Button btnInventory;
 
     @FXML
     public void initialize() {
@@ -24,6 +26,17 @@ public class MainMenuController {
             Parent orderView = FXMLLoader.load(getClass().getResource("/com/nekkoffee/view/order_screen.fxml"));
             contentArea.getChildren().clear();
             contentArea.getChildren().add(orderView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleNavInventory() {
+        try {
+            Parent inventoryView = FXMLLoader.load(getClass().getResource("/com/nekkoffee/view/inventory_view.fxml"));
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(inventoryView);
         } catch (IOException e) {
             e.printStackTrace();
         }
