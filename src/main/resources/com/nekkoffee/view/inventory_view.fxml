@@ -6,35 +6,38 @@
 <VBox spacing="20" style="-fx-padding: 30;" styleClass="content-pane" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.nekkoffee.controller.InventoryController">
 
     <VBox spacing="10">
-        <Label style="-fx-font-size: 24px;" styleClass="sidebar-brand" text="INVENTORY MANAGEMENT" />
+        <Label style="-fx-font-size: 24px; -fx-text-fill: #E0A96D; -fx-font-weight: bold;" styleClass="sidebar-brand" text="INVENTORY MANAGEMENT" />
         <Separator styleClass="sidebar-divider" />
     </VBox>
 
     <HBox spacing="15">
         <TextField fx:id="searchField" promptText="🔍 Search ingredient..." style="-fx-padding: 12; -fx-font-size: 14px; -fx-background-radius: 5; -fx-border-radius: 5; -fx-border-color: #ddd;" HBox.hgrow="ALWAYS" />
-        <Button onAction="#handleAdd" style="-fx-background-color: #6B4226; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="➕ Add New Ingredient" />
-        <Button onAction="#handleLowStockReport" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="⚠Low Stock Report" />
+        <Button onAction="#handleAdd" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="➕ Add New" />
+        <Button onAction="#handleLowStockReport" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="⚠ Low Stock" />
     </HBox>
 
     <TableView fx:id="inventoryTable" style="-fx-background-color: white; -fx-border-color: #ddd; -fx-border-radius: 5;">
         <columns>
             <TableColumn fx:id="colId" prefWidth="60" text="ID" />
-            <TableColumn fx:id="colName" prefWidth="200" text="Ingredient Name" />
+            <TableColumn fx:id="colName" prefWidth="250" text="Ingredient Name" />
             <TableColumn fx:id="colStock" prefWidth="120" text="Stock" />
             <TableColumn fx:id="colUnit" prefWidth="100" text="Unit" />
-            <TableColumn fx:id="colMinLevel" prefWidth="120" text="Min Required" />
-            <TableColumn fx:id="colStatus" prefWidth="120" text="Status" />
+            <TableColumn fx:id="colMinLevel" prefWidth="130" text="Min Required" />
+            <TableColumn fx:id="colStatus" prefWidth="140" text="Status" />
         </columns>
+        <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+        </columnResizePolicy>
         <placeholder>
             <Label style="-fx-text-fill: #999;" text="No inventory items found" />
         </placeholder>
     </TableView>
 
     <HBox alignment="CENTER_RIGHT" spacing="15">
-        <Button onAction="#handleRestock" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text=" Restock Selected" />
-        <Button onAction="#handleEdit" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="✏ Edit" />
-        <Button onAction="#handleDelete" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="🗑 Delete" />
-        <Button onAction="#handleBack" style="-fx-background-color: #9E9E9E; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5;" text="🔙 Back" />
+        <Button onAction="#handleRestock" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="📦 Restock" />
+        <Button onAction="#handleEdit" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="✏ Edit" />
+        <Button onAction="#handleDelete" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="🗑 Delete" />
+        <Button onAction="#handleBack" style="-fx-background-color: #E0A96D; -fx-text-fill: white; -fx-padding: 10 20; -fx-cursor: hand; -fx-background-radius: 5; -fx-font-weight: bold;" text="🔙 Back" />
     </HBox>
 
 </VBox>
