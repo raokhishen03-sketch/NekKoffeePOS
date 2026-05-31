@@ -1,124 +1,232 @@
 package com.nekkoffee.controller;
 
-import com.nekkoffee.model.Product;
-import com.nekkoffee.util.DatabaseConnection;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import java.util.List;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 
 public class OrderScreenController {
 
-    @FXML private VBox menuContainer;
-    @FXML private ListView<String> cartListView;
+    @FXML private TextField searchField;
 
-    // Tracking current financial totals running in checkout sidebar (Frontend Dev B's Area)
-    private double currentSubtotal = 0.0;
-    @FXML private Label lblSubtotal;
-    @FXML private Label lblTax;
-    @FXML private Label lblTotal;
+    @FXML private VBox coffeeCard;
+    @FXML private VBox chocolateCard;
+    @FXML private VBox whiteChocolateCard;
+    @FXML private VBox matchaCard;
+    @FXML private VBox snacksCard;
+
 
     @FXML
     public void initialize() {
-        loadMenuCategory("All Items");
+
+        showAll();
+
+        searchField.textProperty().addListener(
+                (obs, oldVal, newVal)->{
+                    filterMenu(newVal.trim().toLowerCase());
+                }
+        );
+
     }
 
-    /**
-     * Category filter logic managed by Dev A.
-     * Pulls list sets safely from the database architecture layer.
-     */
-    private void loadMenuCategory(String category) {
-        menuContainer.getChildren().clear();
 
-        // Frontend Dev pulls from our proxy architecture safely:
-        List<Product> visibleProducts = DatabaseConnection.getProductsByCategory(category);
+    private void filterMenu(String text){
 
-        for (Product product : visibleProducts) {
-            createDynamicProductCard(product);
-        }
-    }
-
-    private void createDynamicProductCard(Product product) {
-        VBox productWrapper = new VBox();
-        productWrapper.setStyle("-fx-background-color: #2a2a35; -fx-background-radius: 8; -fx-padding: 15;");
-
-        HBox itemHeader = new HBox();
-        Label nameLabel = new Label(product.getProductName() + " - RM " + String.format("%.2f", product.getPrice()));
-        nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold;");
-
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
-        Button btnExpand = new Button("Customize");
-        btnExpand.setStyle("-fx-background-color: #e0a96d; -fx-text-fill: #111115; -fx-font-weight: bold; -fx-cursor: hand;");
-
-        itemHeader.getChildren().addAll(nameLabel, spacer, btnExpand);
-        productWrapper.getChildren().add(itemHeader);
-
-        // Inline Foodpanda-style sub-tray
-        VBox addonContainer = new VBox(8);
-        addonContainer.setPadding(new Insets(10, 0, 5, 15));
-        addonContainer.setManaged(false);
-        addonContainer.setVisible(false);
-
-        Label customizeHeading = new Label("Select Customization Modifications:");
-        customizeHeading.setStyle("-fx-text-fill: #8c8c8c; -fx-font-size: 12px;");
-        addonContainer.getChildren().add(customizeHeading);
-
-        // Populate modifiers dynamically according to product structural parameters
-        ToggleGroup addonGroup = new ToggleGroup();
-        List<Product> functionalAddons = DatabaseConnection.getAddonsForProduct(product.getProductID());
-        for (Product addon : functionalAddons) {
-            RadioButton rb = new RadioButton(addon.getProductName());
-            rb.setUserData(addon); // Stashing actual data object securely inside the radio button instance
-            rb.setStyle("-fx-text-fill: #d3d3d3;");
-            rb.setToggleGroup(addonGroup);
-            addonContainer.getChildren().add(rb);
+        if(text.isEmpty()){
+            showAll();
+            return;
         }
 
-        Button btnAddToCart = new Button("Add Item to Cart");
-        btnAddToCart.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-        addonContainer.getChildren().add(btnAddToCart);
+        hideAll();
 
-        productWrapper.getChildren().add(addonContainer);
-        menuContainer.getChildren().add(productWrapper);
 
-        btnExpand.setOnAction(e -> {
-            boolean visible = !addonContainer.isVisible();
-            addonContainer.setVisible(visible);
-            addonContainer.setManaged(visible);
-            btnExpand.setText(visible ? "Collapse" : "Customize");
-        });
+        // coffee
+        if(
+                "coffee".contains(text)
+                        ||"americano".contains(text)
+                        ||"latte".contains(text)
+                        ||"cappuccino".contains(text)
+                        ||"extra shot".contains(text)
+        ){
 
-        // Cart Insertion logic with pricing computations (Dev B workflow pipeline hook)
-        btnAddToCart.setOnAction(e -> {
-            RadioButton selectedRb = (RadioButton) addonGroup.getSelectedToggle();
-            double finalPrice = product.getPrice();
-            String itemLineDescription = product.getProductName();
+            coffeeCard.setVisible(true);
+            coffeeCard.setManaged(true);
 
-            if (selectedRb != null) {
-                Product selectedAddon = (Product) selectedRb.getUserData();
-                finalPrice += selectedAddon.getPrice();
-                itemLineDescription += " + " + selectedAddon.getProductName();
-            }
+        }
 
-            cartListView.getItems().add(itemLineDescription + " | RM " + String.format("%.2f", finalPrice));
 
-            // Increment financials running tallies
-            currentSubtotal += finalPrice;
-            double tax = currentSubtotal * 0.06;
-            double total = currentSubtotal + tax;
+        // chocolate
+        if(
+                "chocolate".contains(text)
+                        ||"white chocolate".contains(text)
+                        ||"hazelnut".contains(text)
+                        ||"strawberry".contains(text)
+                        ||"caramel".contains(text)
+                        ||"berries".contains(text)
+        ){
 
-            lblSubtotal.setText("RM " + String.format("%.2f", currentSubtotal));
-            lblTax.setText("RM " + String.format("%.2f", tax));
-            lblTotal.setText("RM " + String.format("%.2f", total));
+            chocolateCard.setVisible(true);
+            chocolateCard.setManaged(true);
 
-            // Clean up state
-            addonContainer.setVisible(false);
-            addonContainer.setManaged(false);
-            btnExpand.setText("Customize");
-            if(selectedRb != null) selectedRb.setSelected(false);
-        });
+            whiteChocolateCard.setVisible(true);
+            whiteChocolateCard.setManaged(true);
+
+        }
+
+
+        // matcha
+        if(
+                "matcha".contains(text)
+                        ||"dirty matcha".contains(text)
+                        ||"mango".contains(text)
+        ){
+
+            matchaCard.setVisible(true);
+            matchaCard.setManaged(true);
+
+        }
+
+
+        // snacks
+        if(
+                "snacks".contains(text)
+                        ||"pizza".contains(text)
+                        ||"toast".contains(text)
+                        ||"bread".contains(text)
+                        ||"garlic".contains(text)
+        ){
+
+            snacksCard.setVisible(true);
+            snacksCard.setManaged(true);
+
+        }
+
     }
+
+
+
+    @FXML
+    private void showCoffee(){
+
+        hideAll();
+
+        coffeeCard.setVisible(true);
+        coffeeCard.setManaged(true);
+
+    }
+
+
+
+    @FXML
+    private void showChocolate(){
+
+        hideAll();
+
+        chocolateCard.setVisible(true);
+        chocolateCard.setManaged(true);
+
+        whiteChocolateCard.setVisible(true);
+        whiteChocolateCard.setManaged(true);
+
+    }
+
+
+
+
+    @FXML
+    private void showMatcha(){
+
+        hideAll();
+
+        matchaCard.setVisible(true);
+        matchaCard.setManaged(true);
+
+    }
+
+
+
+    @FXML
+    private void showSnacks(){
+
+        hideAll();
+
+        snacksCard.setVisible(true);
+        snacksCard.setManaged(true);
+
+    }
+
+
+
+    @FXML
+    private void showAll(){
+
+        coffeeCard.setVisible(true);
+        coffeeCard.setManaged(true);
+
+        chocolateCard.setVisible(true);
+        chocolateCard.setManaged(true);
+
+        whiteChocolateCard.setVisible(true);
+        whiteChocolateCard.setManaged(true);
+
+        matchaCard.setVisible(true);
+        matchaCard.setManaged(true);
+
+        snacksCard.setVisible(true);
+        snacksCard.setManaged(true);
+
+    }
+
+
+
+    private void hideAll(){
+
+        coffeeCard.setVisible(false);
+        coffeeCard.setManaged(false);
+
+        chocolateCard.setVisible(false);
+        chocolateCard.setManaged(false);
+
+        whiteChocolateCard.setVisible(false);
+        whiteChocolateCard.setManaged(false);
+
+        matchaCard.setVisible(false);
+        matchaCard.setManaged(false);
+
+        snacksCard.setVisible(false);
+        snacksCard.setManaged(false);
+
+    }
+
+
+
+    @FXML
+    void hoverIn(MouseEvent e){
+
+        VBox card=(VBox)e.getSource();
+
+        card.setStyle("""
+        -fx-background-color:#3b3b4d;
+        -fx-background-radius:20;
+        -fx-padding:20;
+        -fx-effect:dropshadow(gaussian,#f4b56a,20,0.5,0,0);
+        """);
+
+    }
+
+
+
+    @FXML
+    void hoverOut(MouseEvent e){
+
+        VBox card=(VBox)e.getSource();
+
+        card.setStyle("""
+        -fx-background-color:#2b2b3c;
+        -fx-background-radius:20;
+        -fx-padding:20;
+        """);
+
+    }
+
 }

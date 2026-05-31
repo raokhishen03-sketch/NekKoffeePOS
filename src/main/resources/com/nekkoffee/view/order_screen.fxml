@@ -1,23 +1,267 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.nekkoffee.controller.OrderScreenController"
-      spacing="20" style="-fx-background-color: #1e1e24;">
+      spacing="15"
+      style="-fx-background-color:#15151f;">
+
     <padding>
-        <Insets top="30" right="30" bottom="30" left="30"/>
+        <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="Order Screen Sub-Workspace" style="-fx-text-fill: #e0a96d; -fx-font-size: 24px; -fx-font-weight: bold;"/>
-    <Label text="[Member 3 &amp; Member 4 Working Pipeline Area]" style="-fx-text-fill: #b3b3b3; -fx-font-size: 14px;"/>
 
-    <VBox fx:id="menuContainer" spacing="10"/>
+    <Label text="☕ NekKoffee Menu"
+           style="-fx-font-size:32;
+           -fx-font-weight:bold;
+           -fx-text-fill:#f4b56a;"/>
 
-    <ListView fx:id="cartListView" visible="false" managed="false"/>
-    <Label fx:id="lblSubtotal" visible="false" managed="false"/>
-    <Label fx:id="lblTax" visible="false" managed="false"/>
-    <Label fx:id="lblTotal" visible="false" managed="false"/>
+
+    <HBox style="
+            -fx-background-color:#f4b56a;
+            -fx-padding:15;
+            -fx-background-radius:15;">
+
+        <Label text="🔥 Buy 2 Drinks Free Soft Cookies"
+               style="-fx-font-size:18;
+               -fx-font-weight:bold;"/>
+
+    </HBox>
+
+
+    <TextField fx:id="searchField"
+               promptText="Search coffee, matcha, pizza..."
+               style="
+               -fx-background-radius:20;
+               -fx-padding:10;"/>
+
+
+
+    <HBox spacing="10">
+
+        <Button text="Coffee (5)"
+                onAction="#showCoffee"/>
+
+        <Button text="Chocolate (8)"
+                onAction="#showChocolate"/>
+
+        <Button text="Matcha (6)"
+                onAction="#showMatcha"/>
+
+        <Button text="Snacks (4)"
+                onAction="#showSnacks"/>
+
+        <Button text="All"
+                onAction="#showAll"/>
+
+    </HBox>
+
+
+
+    <ScrollPane fitToWidth="true">
+
+        <content>
+
+            <VBox spacing="20">
+
+
+
+                <VBox fx:id="chocolateCard"
+                      onMouseEntered="#hoverIn"
+                      onMouseExited="#hoverOut"
+
+                      style="-fx-background-color:#2b2b3c;
+-fx-background-radius:20;
+-fx-padding:20;">
+
+
+                    <Label text="🍫 Chocolate"
+                           style="-fx-font-size:20;
+-fx-font-weight:bold;
+-fx-text-fill:#f4b56a;"/>
+
+                    <ImageView fitWidth="120"
+                               fitHeight="100">
+
+                        <image>
+                            <Image url="@../images/chocolate.png"/>
+                        </image>
+
+                    </ImageView>
+
+                    <Label text="Chocolate RM8"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Chocolate Hazelnut RM10"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Chocolate Strawberry RM12"
+                           style="-fx-text-fill:white;"/>
+
+                </VBox>
+
+
+
+
+
+                <VBox fx:id="coffeeCard"
+                      onMouseEntered="#hoverIn"
+                      onMouseExited="#hoverOut"
+
+                      style="-fx-background-color:#2b2b3c;
+-fx-background-radius:20;
+-fx-padding:20;">
+
+
+                    <Label text="☕ Coffee"
+                           style="-fx-font-size:20;
+-fx-font-weight:bold;
+-fx-text-fill:#f4b56a;"/>
+
+                    <ImageView fitWidth="120"
+                               fitHeight="100">
+
+                        <image>
+                            <Image url="@../images/coffee.png"/>
+                        </image>
+
+                    </ImageView>
+
+                    <Label text="Americano RM4"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Latte RM6"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Cappuccino RM6"
+                           style="-fx-text-fill:white;"/>
+
+                </VBox>
+
+
+
+
+
+                <VBox fx:id="whiteChocolateCard"
+                      onMouseEntered="#hoverIn"
+                      onMouseExited="#hoverOut"
+
+                      style="-fx-background-color:#2b2b3c;
+-fx-background-radius:20;
+-fx-padding:20;">
+
+
+                    <Label text="🥛 White Chocolate"
+                           style="-fx-font-size:20;
+-fx-font-weight:bold;
+-fx-text-fill:#f4b56a;"/>
+
+                    <ImageView fitWidth="120"
+                               fitHeight="100">
+
+                        <image>
+                            <Image url="@../images/whitecoffee.png"/>
+                        </image>
+
+                    </ImageView>
+
+
+                    <Label text="White Chocolate RM8"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Caramel RM10"
+                           style="-fx-text-fill:white;"/>
+
+                </VBox>
+
+
+
+
+
+
+                <VBox fx:id="matchaCard"
+                      onMouseEntered="#hoverIn"
+                      onMouseExited="#hoverOut"
+
+                      style="-fx-background-color:#2b2b3c;
+-fx-background-radius:20;
+-fx-padding:20;">
+
+
+                    <Label text="🍵 Matcha"
+                           style="-fx-font-size:20;
+-fx-font-weight:bold;
+-fx-text-fill:#f4b56a;"/>
+
+
+                    <ImageView fitWidth="120"
+                               fitHeight="100">
+
+                        <image>
+                            <Image url="@../images/matcha.png"/>
+                        </image>
+
+                    </ImageView>
+
+                    <Label text="Matcha RM8"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Dirty Matcha RM12"
+                           style="-fx-text-fill:white;"/>
+
+                </VBox>
+
+
+
+
+
+
+                <VBox fx:id="snacksCard"
+                      onMouseEntered="#hoverIn"
+                      onMouseExited="#hoverOut"
+
+                      style="-fx-background-color:#2b2b3c;
+-fx-background-radius:20;
+-fx-padding:20;">
+
+
+                    <Label text="🍟 Snacks"
+                           style="-fx-font-size:20;
+-fx-font-weight:bold;
+-fx-text-fill:#f4b56a;"/>
+
+
+                    <ImageView fitWidth="120"
+                               fitHeight="100">
+
+                        <image>
+                            <Image url="@../images/snacks.png"/>
+                        </image>
+
+                    </ImageView>
+
+                    <Label text="Mini Pizza RM12"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Cheesy Chicken Toast RM8"
+                           style="-fx-text-fill:white;"/>
+
+                    <Label text="Garlic Bread RM2"
+                           style="-fx-text-fill:white;"/>
+
+
+                </VBox>
+
+
+            </VBox>
+
+        </content>
+
+    </ScrollPane>
+
 </VBox>
