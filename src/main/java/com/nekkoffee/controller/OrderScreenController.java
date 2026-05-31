@@ -16,17 +16,16 @@ public class OrderScreenController {
     @FXML private ListView<String> cartListView;
 
     // Tracking current financial totals running in checkout sidebar (Frontend Dev B's Area)
-    // Active cart list to track items
+    private double currentSubtotal = 0.0;
+    @FXML private Label lblSubtotal;
+    @FXML private Label lblTax;
+    @FXML private Label lblTotal;
+
     private List<Product> activeCart = new ArrayList<>();
 
     @FXML private TextField txtPhoneNumber;   // loyalty phone number field
     @FXML private ChoiceBox<String> choiceServiceType; // dine-in/takeaway dropdown
     @FXML private Button btnConfirmOrder;
-
-    private double currentSubtotal = 0.0;
-    @FXML private Label lblSubtotal;
-    @FXML private Label lblTax;
-    @FXML private Label lblTotal;
 
     @FXML
     public void initialize() {
@@ -45,12 +44,10 @@ public class OrderScreenController {
 
         for (Product product : visibleProducts) {
             createDynamicProductCard(product);
-
         }
     }
 
     private void createDynamicProductCard(Product product) {
-
         VBox productWrapper = new VBox();
         productWrapper.setStyle("-fx-background-color: #2a2a35; -fx-background-radius: 8; -fx-padding: 15;");
 
@@ -112,7 +109,9 @@ public class OrderScreenController {
                 Product selectedAddon = (Product) selectedRb.getUserData();
                 finalPrice += selectedAddon.getPrice();
                 itemLineDescription += " + " + selectedAddon.getProductName();
+                activeCart.add(selectedAddon);
             }
+            activeCart.add(product);
 
             cartListView.getItems().add(itemLineDescription + " | RM " + String.format("%.2f", finalPrice));
 
@@ -126,6 +125,9 @@ public class OrderScreenController {
             lblTotal.setText("RM " + String.format("%.2f", total));
 
             // Clean up state
+            cartListView.getItems().add(itemLineDescription + " | RM " + String.format("%.2f", finalPrice));
+
+            updateTotals();
             addonContainer.setVisible(false);
             addonContainer.setManaged(false);
             btnExpand.setText("Customize");
@@ -133,36 +135,6 @@ public class OrderScreenController {
         });
     }
     // --- Sidebar Cart Functions ---
-    // --Calculation Functions--
-    private double calculateSubtotal() {
-        return activeCart.stream().mapToDouble(Product::getPrice).sum();
-    }
-
-    private double calculateTax(double subtotal) {
-        return subtotal * 0.06;
-    }
-
-    private double calculateGrandTotal(double subtotal, double tax) {
-        return subtotal + tax;
-    }
-
-    private void updateTotals() {
-        double subtotal = calculateSubtotal();
-        double tax = calculateTax(subtotal);
-        double total = calculateGrandTotal(subtotal, tax);
-
-        lblSubtotal.setText("RM " + String.format("%.2f", subtotal));
-        lblTax.setText("RM " + String.format("%.2f", tax));
-        lblTotal.setText("RM " + String.format("%.2f", total));
-    }
-
-    //--Loyalty--
-    private void applyLoyaltyPoints(double billTotal) {
-        String phone = txtPhoneNumber.getText();
-        if (phone != null && !phone.isEmpty()) {
-            DatabaseConnection.addLoyaltyPoints(phone, billTotal);
-        }
-    }
 
     @FXML private Button btnRemoveItem;
     @FXML private Button btnClearCart;
@@ -221,7 +193,34 @@ public class OrderScreenController {
         lblTax.setText("RM " + String.format("%.2f", tax));
         lblTotal.setText("RM " + String.format("%.2f", total));
     }
-    //---Confirm Order--
+
+    private double calculateSubtotal() {
+        return activeCart.stream().mapToDouble(Product::getPrice).sum();
+    }
+
+    private double calculateTax(double subtotal) {
+        return subtotal * 0.06;
+    }
+
+    private double calculateGrandTotal(double subtotal, double tax) {
+        return subtotal + tax;
+    }
+
+    private void updateTotals() {
+        double subtotal = calculateSubtotal();
+        double tax = calculateTax(subtotal);
+        double total = calculateGrandTotal(subtotal, tax);
+
+        lblSubtotal.setText("RM " + String.format("%.2f", subtotal));
+        lblTax.setText("RM " + String.format("%.2f", tax));
+        lblTotal.setText("RM " + String.format("%.2f", total));
+    }
+    private void applyLoyaltyPoints(double billTotal) {
+        String phone = txtPhoneNumber.getText();
+        if (phone != null && !phone.isEmpty()) {
+            DatabaseConnection.addLoyaltyPoints(phone, billTotal);
+        }
+    }
     @FXML
     private void confirmOrder() {
         double subtotal = calculateSubtotal();
@@ -248,5 +247,3 @@ public class OrderScreenController {
         updateTotals();
     }
 }
-
-

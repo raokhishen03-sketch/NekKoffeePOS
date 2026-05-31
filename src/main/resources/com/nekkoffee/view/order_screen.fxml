@@ -4,7 +4,6 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<?import javafx.collections.FXCollections?>
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.nekkoffee.controller.OrderScreenController"
       spacing="20" style="-fx-background-color: #1e1e24;">
@@ -28,8 +27,8 @@
 
     <TextField fx:id="txtPhoneNumber" promptText="Enter phone number for loyalty"/>
     <ChoiceBox fx:id="choiceServiceType"/>
+
+    <!-- Confirm Order Button -->
     <Button fx:id="btnConfirmOrder" text="Confirm Order" onAction="#confirmOrder"
             style="-fx-background-color: #e0a96d; -fx-text-fill: #111115; -fx-font-weight: bold;"/>
-
-
 </VBox>
