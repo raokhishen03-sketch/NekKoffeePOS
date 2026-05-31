@@ -4,6 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
+<?import javafx.collections.FXCollections?>
 <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.nekkoffee.controller.OrderScreenController"
       spacing="20" style="-fx-background-color: #1e1e24;">
@@ -20,4 +21,15 @@
     <Label fx:id="lblSubtotal" visible="false" managed="false"/>
     <Label fx:id="lblTax" visible="false" managed="false"/>
     <Label fx:id="lblTotal" visible="false" managed="false"/>
+
+    <Button fx:id="btnRemoveItem" text="Remove Item" onAction="#removeSelectedItem"/>
+    <Button fx:id="btnClearCart" text="Clear Cart" onAction="#clearCart"/>
+    <Button fx:id="btnCheckout" text="Checkout" onAction="#checkoutCart"/>
+
+    <TextField fx:id="txtPhoneNumber" promptText="Enter phone number for loyalty"/>
+    <ChoiceBox fx:id="choiceServiceType"/>
+    <Button fx:id="btnConfirmOrder" text="Confirm Order" onAction="#confirmOrder"
+            style="-fx-background-color: #e0a96d; -fx-text-fill: #111115; -fx-font-weight: bold;"/>
+
+
 </VBox>

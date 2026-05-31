@@ -106,4 +106,59 @@ public class DatabaseConnection {
         addons.add(new Product(99, "Fallback Extra Shot (DB Offline)", 2.00, null, true, 1));
         return addons;
     }
+    /**
+     * Loyalty points: add points based on bill total.
+     */
+    public static void addLoyaltyPoints(String phoneNumber, double billTotal) {
+        try (Connection conn = getConnection()) {
+            String sql = "UPDATE customers SET loyalty_points = loyalty_points + ? WHERE phone_number = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            int points = (int)(billTotal / 10); // Example: 1 point per RM10 spent
+            stmt.setInt(1, points);
+            stmt.setString(2, phoneNumber);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Save order header into orders table.
+     */
+    public static int saveOrder(String serviceType, double subtotal, double tax, double total) {
+        int orderId = -1;
+        try (Connection conn = getConnection()) {
+            String sql = "INSERT INTO orders(service_type, subtotal, tax, total) VALUES(?,?,?,?)";
+            PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, serviceType);
+            stmt.setDouble(2, subtotal);
+            stmt.setDouble(3, tax);
+            stmt.setDouble(4, total);
+            stmt.executeUpdate();
+
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                orderId = rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return orderId;
+    }
+
+    /**
+     * Save each order item into order_items table.
+     */
+    public static void saveOrderItem(int orderId, int productId, double price) {
+        try (Connection conn = getConnection()) {
+            String sql = "INSERT INTO order_items(order_id, product_id, price) VALUES(?,?,?)";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, orderId);
+            stmt.setInt(2, productId);
+            stmt.setDouble(3, price);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

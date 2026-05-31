@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderScreenController {
@@ -14,6 +16,13 @@ public class OrderScreenController {
     @FXML private ListView<String> cartListView;
 
     // Tracking current financial totals running in checkout sidebar (Frontend Dev B's Area)
+    // Active cart list to track items
+    private List<Product> activeCart = new ArrayList<>();
+
+    @FXML private TextField txtPhoneNumber;   // loyalty phone number field
+    @FXML private ChoiceBox<String> choiceServiceType; // dine-in/takeaway dropdown
+    @FXML private Button btnConfirmOrder;
+
     private double currentSubtotal = 0.0;
     @FXML private Label lblSubtotal;
     @FXML private Label lblTax;
@@ -36,10 +45,12 @@ public class OrderScreenController {
 
         for (Product product : visibleProducts) {
             createDynamicProductCard(product);
+
         }
     }
 
     private void createDynamicProductCard(Product product) {
+
         VBox productWrapper = new VBox();
         productWrapper.setStyle("-fx-background-color: #2a2a35; -fx-background-radius: 8; -fx-padding: 15;");
 
@@ -121,4 +132,121 @@ public class OrderScreenController {
             if(selectedRb != null) selectedRb.setSelected(false);
         });
     }
+    // --- Sidebar Cart Functions ---
+    // --Calculation Functions--
+    private double calculateSubtotal() {
+        return activeCart.stream().mapToDouble(Product::getPrice).sum();
+    }
+
+    private double calculateTax(double subtotal) {
+        return subtotal * 0.06;
+    }
+
+    private double calculateGrandTotal(double subtotal, double tax) {
+        return subtotal + tax;
+    }
+
+    private void updateTotals() {
+        double subtotal = calculateSubtotal();
+        double tax = calculateTax(subtotal);
+        double total = calculateGrandTotal(subtotal, tax);
+
+        lblSubtotal.setText("RM " + String.format("%.2f", subtotal));
+        lblTax.setText("RM " + String.format("%.2f", tax));
+        lblTotal.setText("RM " + String.format("%.2f", total));
+    }
+
+    //--Loyalty--
+    private void applyLoyaltyPoints(double billTotal) {
+        String phone = txtPhoneNumber.getText();
+        if (phone != null && !phone.isEmpty()) {
+            DatabaseConnection.addLoyaltyPoints(phone, billTotal);
+        }
+    }
+
+    @FXML private Button btnRemoveItem;
+    @FXML private Button btnClearCart;
+    @FXML private Button btnCheckout;
+
+    @FXML
+    private void removeSelectedItem() {
+        String selectedItem = cartListView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            // Extract price from string "Item | RM xx.xx"
+            String[] parts = selectedItem.split("RM");
+            if (parts.length > 1) {
+                double price = Double.parseDouble(parts[1].trim());
+                currentSubtotal -= price;
+            }
+            cartListView.getItems().remove(selectedItem);
+            recalcTotals();
+        }
+    }
+
+    @FXML
+    private void clearCart() {
+        cartListView.getItems().clear();
+        currentSubtotal = 0.0;
+        recalcTotals();
+    }
+
+    @FXML
+    private void checkoutCart() {
+        if (cartListView.getItems().isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Your cart is empty!");
+            alert.showAndWait();
+            return;
+        }
+
+        double tax = currentSubtotal * 0.06;
+        double total = currentSubtotal + tax;
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "Checkout Successful!\nSubtotal: RM " + String.format("%.2f", currentSubtotal) +
+                        "\nTax: RM " + String.format("%.2f", tax) +
+                        "\nTotal: RM " + String.format("%.2f", total));
+        alert.setHeaderText("Order Summary");
+        alert.showAndWait();
+
+        // Reset cart after checkout
+        clearCart();
+    }
+
+    // Utility to recalc labels
+    private void recalcTotals() {
+        double tax = currentSubtotal * 0.06;
+        double total = currentSubtotal + tax;
+
+        lblSubtotal.setText("RM " + String.format("%.2f", currentSubtotal));
+        lblTax.setText("RM " + String.format("%.2f", tax));
+        lblTotal.setText("RM " + String.format("%.2f", total));
+    }
+    //---Confirm Order--
+    @FXML
+    private void confirmOrder() {
+        double subtotal = calculateSubtotal();
+        double tax = calculateTax(subtotal);
+        double total = calculateGrandTotal(subtotal, tax);
+
+        applyLoyaltyPoints(total);
+
+        String serviceType = choiceServiceType.getValue();
+
+        int orderId = DatabaseConnection.saveOrder(serviceType, subtotal, tax, total);
+        for (Product p : activeCart) {
+            DatabaseConnection.saveOrderItem(orderId, p.getProductID(), p.getPrice());
+        }
+
+        Alert alert = new Alert(Alert.AlertType.INFORMATION,
+                "Order Confirmed!\nService: " + serviceType +
+                        "\nTotal: RM " + String.format("%.2f", total));
+        alert.setHeaderText("Order Success");
+        alert.showAndWait();
+
+        activeCart.clear();
+        cartListView.getItems().clear();
+        updateTotals();
+    }
 }
+
+
