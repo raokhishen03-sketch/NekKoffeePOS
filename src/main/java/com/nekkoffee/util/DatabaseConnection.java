@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DatabaseConnection {
     // Make sure the port (3100 or 3306) matches whatever your XAMPP MySQL is using!
-    private static final String URL = "jdbc:mysql://localhost:3306/nekoffeedb";
+    private static final String URL = "jdbc:mysql://localhost:3306/nekkoffeedb";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
