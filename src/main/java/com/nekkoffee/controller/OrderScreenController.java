@@ -33,6 +33,12 @@ public class OrderScreenController {
 
     @FXML
     public void initialize() {
+        // Populate the dropdown
+        choiceServiceType.getItems().addAll("Dine-In", "Takeaway");
+
+        // Safe fallback to prevent null crash
+        choiceServiceType.setValue("Dine-In");
+
         loadMenuCategory("All Items");
     }
 

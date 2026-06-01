@@ -161,4 +161,28 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
     }
+
+    // sales history
+    public static List<String> getSalesHistory() {
+        List<String> history = new ArrayList<>();
+        String sql = "SELECT order_id, service_type, total, created_at FROM orders ORDER BY created_at DESC";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String line = "Order #" + rs.getInt("order_id") +
+                        " | " + rs.getString("service_type") +
+                        " | RM " + String.format("%.2f", rs.getDouble("total")) +
+                        " | " + rs.getTimestamp("created_at");
+                history.add(line);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return history;
+    }
+// history
+
 }

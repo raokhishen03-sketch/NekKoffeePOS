@@ -13,13 +13,15 @@
             <padding>
                 <Insets top="30" right="15" bottom="30" left="15"/>
             </padding>
-            <Label text="NekKoffee" styleClass="sidebar-brand"/>
+            <Label text="NEKOFFEE" styleClass="sidebar-brand"/>
             <Separator styleClass="sidebar-divider"/>
             <Button text="New Order" fx:id="btnOrder" maxWidth="Infinity" styleClass="sidebar-btn, active-btn" onAction="#handleNavOrder"/>
             <Button text="Inventory" fx:id="btnInventory" maxWidth="Infinity" styleClass="sidebar-btn" onAction="#handleNavInventory"/>
-            <Button text="Sales History" fx:id="btnSales" maxWidth="Infinity" styleClass="sidebar-btn"/>
+            <Button text="Sales History" fx:id="btnSales" maxWidth="Infinity" styleClass="sidebar-btn" onAction="#openSalesHistory"/>
+
             <Region VBox.vgrow="ALWAYS"/>
             <Button text="Logout" styleClass="sidebar-btn-logout"/>
+
         </VBox>
     </left>
 
@@ -31,4 +33,5 @@
             <Label text="Welcome to NekKoffee POS. Select an option from the sidebar." styleClass="welcome-text"/>
         </StackPane>
     </center>
+
 </BorderPane>

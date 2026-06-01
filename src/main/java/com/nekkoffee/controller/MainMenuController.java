@@ -41,4 +41,17 @@ public class MainMenuController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void openSalesHistory() {
+        System.out.println("Sales History button clicked!"); // debug
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/nekkoffee/view/sales_history.fxml"));
+            Parent historyView = loader.load();
+            contentArea.getChildren().setAll(historyView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
