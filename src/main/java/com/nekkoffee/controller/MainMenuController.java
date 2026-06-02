@@ -6,29 +6,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
+import javafx.scene.layout.BorderPane;
 
 public class MainMenuController {
 
     @FXML private StackPane contentArea;
     @FXML private Button btnOrder;
-    @FXML
-    private void handleNavInventory() {
-        try {
-            // 1. Load the FXML file your friend designed (ensure the path matches your project resource folders)
-            Parent inventoryView = FXMLLoader.load(getClass().getResource("/com/nekkoffee/view/inventory_view.fxml"));
+    @FXML private Button btnInventory;
 
-            // 2. Clear the main central display area (contentArea StackPane)
-            contentArea.getChildren().clear();
-
-            // 3. Inject the new inventory user interface right into the workspace
-            contentArea.getChildren().add(inventoryView);
-
-            System.out.println("✅ Navigated to Inventory Management Screen smoothly.");
-        } catch (IOException e) {
-            System.out.println("❌ Error: Could not locate or load inventory_view.fxml!");
-            e.printStackTrace();
-        }
-    }
     @FXML
     public void initialize() {
         // Code executing automatically on UI load goes here (e.g., checking DB status)
@@ -45,4 +30,28 @@ public class MainMenuController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    private void handleNavInventory() {
+        try {
+            Parent inventoryView = FXMLLoader.load(getClass().getResource("/com/nekkoffee/view/inventory_view.fxml"));
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(inventoryView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void openSalesHistory() {
+        System.out.println("Sales History button clicked!"); // debug
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/nekkoffee/view/sales_history.fxml"));
+            Parent historyView = loader.load();
+            contentArea.getChildren().setAll(historyView);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

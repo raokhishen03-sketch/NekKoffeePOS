@@ -6,13 +6,17 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OrderScreenController {
 
-    @FXML private VBox menuContainer;
+    @FXML private FlowPane menuContainer;
     @FXML private ListView<String> cartListView;
 
     // Tracking current financial totals running in checkout sidebar (Frontend Dev B's Area)
@@ -29,6 +33,12 @@ public class OrderScreenController {
 
     @FXML
     public void initialize() {
+        // Populate the dropdown
+        choiceServiceType.getItems().addAll("Dine-In", "Takeaway");
+
+        // Safe fallback to prevent null crash
+        choiceServiceType.setValue("Dine-In");
+
         loadMenuCategory("All Items");
     }
 
@@ -37,19 +47,59 @@ public class OrderScreenController {
      * Pulls list sets safely from the database architecture layer.
      */
     private void loadMenuCategory(String category) {
+
         menuContainer.getChildren().clear();
 
-        // Frontend Dev pulls from our proxy architecture safely:
-        List<Product> visibleProducts = DatabaseConnection.getProductsByCategory(category);
+        List<Product> visibleProducts =
+                DatabaseConnection.getProductsByCategory(category);
 
-        for (Product product : visibleProducts) {
+        System.out.println(
+                "Category = " + category +
+                        " | Products Found = " +
+                        visibleProducts.size()
+        );
+
+        for(Product product : visibleProducts){
+            System.out.println(product.getProductName());
             createDynamicProductCard(product);
         }
     }
 
     private void createDynamicProductCard(Product product) {
         VBox productWrapper = new VBox();
+
+        productWrapper.setPrefWidth(220);
+        productWrapper.setPrefHeight(240);
+
+        productWrapper.setSpacing(10);
+
+        productWrapper.setStyle(
+                "-fx-background-color:#2a2a35;" +
+                        "-fx-background-radius:12;" +
+                        "-fx-padding:15;"
+        );
         productWrapper.setStyle("-fx-background-color: #2a2a35; -fx-background-radius: 8; -fx-padding: 15;");
+
+        ImageView imageView = new ImageView();
+
+        try {
+            String imageFile = product.getImagePath();
+
+            Image image = new Image(
+                    getClass().getResourceAsStream(
+                            "/com/nekkoffee/images/" + imageFile
+                    )
+            );
+
+            imageView.setImage(image);
+
+        } catch (Exception ex) {
+            System.out.println("Image not found: " + product.getImagePath());
+        }
+
+        imageView.setFitWidth(180);
+        imageView.setFitHeight(120);
+        imageView.setPreserveRatio(true);
 
         HBox itemHeader = new HBox();
         Label nameLabel = new Label(product.getProductName() + " - RM " + String.format("%.2f", product.getPrice()));
@@ -62,7 +112,10 @@ public class OrderScreenController {
         btnExpand.setStyle("-fx-background-color: #e0a96d; -fx-text-fill: #111115; -fx-font-weight: bold; -fx-cursor: hand;");
 
         itemHeader.getChildren().addAll(nameLabel, spacer, btnExpand);
-        productWrapper.getChildren().add(itemHeader);
+        productWrapper.getChildren().addAll(
+                imageView,
+                itemHeader
+        );
 
         // Inline Foodpanda-style sub-tray
         VBox addonContainer = new VBox(8);
@@ -124,8 +177,9 @@ public class OrderScreenController {
             lblTax.setText("RM " + String.format("%.2f", tax));
             lblTotal.setText("RM " + String.format("%.2f", total));
 
-            // Clean up state
-            cartListView.getItems().add(itemLineDescription + " | RM " + String.format("%.2f", finalPrice));
+            lblSubtotal.setStyle("-fx-text-fill: white;");
+            lblTax.setStyle("-fx-text-fill: white;");
+            lblTotal.setStyle("-fx-text-fill: #e0a96d; -fx-font-size: 20px; -fx-font-weight: bold;");
 
             updateTotals();
             addonContainer.setVisible(false);
@@ -140,6 +194,40 @@ public class OrderScreenController {
     @FXML private Button btnClearCart;
     @FXML private Button btnCheckout;
 
+
+
+    @FXML
+    private void showAllItems() {
+        loadProducts("All Items");
+    }
+
+    @FXML
+    private void showCoffee() {
+        loadProducts("Coffee");
+    }
+
+    @FXML
+    private void showNonCoffee() {
+        loadProducts("Non-Coffee");
+    }
+
+    @FXML
+    private void showFood() {
+        loadProducts("Food");
+    }
+
+
+    private void loadProducts(String category) {
+
+        menuContainer.getChildren().clear();
+
+        List<Product> products =
+                DatabaseConnection.getProductsByCategory(category);
+
+        for(Product product : products) {
+            createDynamicProductCard(product);
+        }
+    }
     @FXML
     private void removeSelectedItem() {
         String selectedItem = cartListView.getSelectionModel().getSelectedItem();
@@ -214,6 +302,10 @@ public class OrderScreenController {
         lblSubtotal.setText("RM " + String.format("%.2f", subtotal));
         lblTax.setText("RM " + String.format("%.2f", tax));
         lblTotal.setText("RM " + String.format("%.2f", total));
+
+        lblSubtotal.setStyle("-fx-text-fill: white;");
+        lblTax.setStyle("-fx-text-fill: white;");
+        lblTotal.setStyle("-fx-text-fill: #e0a96d; -fx-font-size: 20px; -fx-font-weight: bold;");
     }
     private void applyLoyaltyPoints(double billTotal) {
         String phone = txtPhoneNumber.getText();
