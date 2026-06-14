@@ -323,7 +323,13 @@ public class OrderScreenController {
 
         String serviceType = choiceServiceType.getValue();
 
-        int orderId = DatabaseConnection.saveOrder(serviceType, subtotal, tax, total);
+        int orderId = DatabaseConnection.saveOrder(
+                serviceType,
+                subtotal,
+                tax,
+                total,
+                txtPhoneNumber.getText()
+        );
         for (Product p : activeCart) {
             DatabaseConnection.saveOrderItem(orderId, p.getProductID(), p.getPrice());
         }

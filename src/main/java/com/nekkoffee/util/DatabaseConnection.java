@@ -7,7 +7,7 @@ import java.util.List;
 
 public class DatabaseConnection {
     // Make sure the port (3100 or 3306) matches whatever your XAMPP MySQL is using!
-    private static final String URL = "jdbc:mysql://localhost:3306/nekkoffeedb";
+    private static final String URL = "jdbc:mysql://localhost:3306/nekoffeedb";
     private static final String USER = "root";
     private static final String PASSWORD = "";
 
@@ -125,15 +125,18 @@ public class DatabaseConnection {
     /**
      * Save order header into orders table.
      */
-    public static int saveOrder(String serviceType, double subtotal, double tax, double total) {
+    public static int saveOrder(String serviceType, double subtotal, double tax, double total, String phone_Number) {
         int orderId = -1;
         try (Connection conn = getConnection()) {
-            String sql = "INSERT INTO orders(service_type, subtotal, tax, total) VALUES(?,?,?,?)";
+            String sql =
+                    "INSERT INTO orders(service_type, subtotal, tax, total, phone_Number)" +
+            "VALUES(?,?,?,?,?)";
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             stmt.setString(1, serviceType);
             stmt.setDouble(2, subtotal);
             stmt.setDouble(3, tax);
             stmt.setDouble(4, total);
+            stmt.setString(5, phone_Number);
             stmt.executeUpdate();
 
             ResultSet rs = stmt.getGeneratedKeys();

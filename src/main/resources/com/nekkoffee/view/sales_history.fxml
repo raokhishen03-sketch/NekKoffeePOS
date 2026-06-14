@@ -25,6 +25,9 @@
             <TableColumn fx:id="colDate" text="Date" prefWidth="150"/>
             <TableColumn fx:id="colServiceType" text="Service Type" prefWidth="120"/>
             <TableColumn fx:id="colTotal" text="Total (RM)" prefWidth="100"/>
+            <TableColumn fx:id="colPhoneNumber"
+                         text="Phone Number"
+                         prefWidth="150"/>
         </columns>
     </TableView>
 

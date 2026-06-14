@@ -14,18 +14,23 @@ class Order {
     private String serviceType;
     private double total;
     private String date;
+    private String phoneNumber;
 
-    public Order(int orderId, String serviceType, double total, String date) {
+    public Order(int orderId, String serviceType, double total, String date, String phoneNumber) {
         this.orderId = orderId;
         this.serviceType = serviceType;
         this.total = total;
         this.date = date;
+        this.phoneNumber = phoneNumber;
     }
 
     public int getOrderId() { return orderId; }
     public String getServiceType() { return serviceType; }
     public double getTotal() { return total; }
     public String getDate() { return date; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 }
 
 public class SalesHistoryController {
@@ -40,6 +45,7 @@ public class SalesHistoryController {
     @FXML private TableColumn<Order, Number> colTotal;
     @FXML private Label lblTotalSales;
     @FXML private Label lblOrderCount;
+    @FXML private TableColumn<Order, String> colPhoneNumber;
 
     private ObservableList<Order> orders = FXCollections.observableArrayList();
 
@@ -50,18 +56,56 @@ public class SalesHistoryController {
         colDate.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getDate()));
         colServiceType.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().getServiceType()));
         colTotal.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().getTotal()));
+        colPhoneNumber.setCellValueFactory(
+                data -> new javafx.beans.property.SimpleStringProperty(
+                        data.getValue().getPhoneNumber()
+                )
+        );
+
 
         // Load initial data
         loadSalesHistory();
     }
 
     private void loadSalesHistory() {
-        // TODO: Replace with DatabaseConnection.getSalesHistory()
+
         orders.clear();
-        orders.add(new Order(101, "Dine-In", 25.50, "2026-06-01 14:30"));
-        orders.add(new Order(102, "Takeaway", 12.00, "2026-06-01 15:00"));
+
+        try {
+            java.sql.Connection conn =
+                    com.nekkoffee.util.DatabaseConnection.getConnection();
+
+            String sql =
+                    "SELECT order_id, service_type, total, orderDate, phone_number " +
+                            "FROM orders ORDER BY orderDate DESC";
+
+            java.sql.PreparedStatement stmt =
+                    conn.prepareStatement(sql);
+
+            java.sql.ResultSet rs =
+                    stmt.executeQuery();
+
+            while (rs.next()) {
+
+                orders.add(
+                        new Order(
+                                rs.getInt("order_id"),
+                                rs.getString("service_type"),
+                                rs.getDouble("total"),
+                                rs.getString("orderDate"),
+                                rs.getString("phone_number")
+                        )
+                );
+            }
+
+            conn.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         historyTable.setItems(orders);
+
         updateSummary();
     }
 
@@ -71,21 +115,31 @@ public class SalesHistoryController {
         LocalDate start = startDate.getValue();
         LocalDate end = endDate.getValue();
 
+
         // TODO: Replace with DatabaseConnection.getFilteredSalesHistory(searchText, start, end)
         List<Order> filtered = orders.filtered(order -> {
             boolean matches = true;
+
             if (searchText != null && !searchText.isEmpty()) {
                 matches = String.valueOf(order.getOrderId()).contains(searchText)
-                        || order.getServiceType().toLowerCase().contains(searchText.toLowerCase());
+                        || order.getServiceType().toLowerCase().contains(searchText.toLowerCase())
+                        || (order.getPhoneNumber() != null &&
+                        order.getPhoneNumber().contains(searchText));
             }
+
             if (start != null) {
-                matches &= LocalDate.parse(order.getDate().substring(0, 10)).isAfter(start.minusDays(1));
+                matches &= LocalDate.parse(order.getDate().substring(0, 10))
+                        .isAfter(start.minusDays(1));
             }
+
             if (end != null) {
-                matches &= LocalDate.parse(order.getDate().substring(0, 10)).isBefore(end.plusDays(1));
+                matches &= LocalDate.parse(order.getDate().substring(0, 10))
+                        .isBefore(end.plusDays(1));
             }
+
             return matches;
         });
+
 
         historyTable.setItems(FXCollections.observableArrayList(filtered));
         updateSummary();

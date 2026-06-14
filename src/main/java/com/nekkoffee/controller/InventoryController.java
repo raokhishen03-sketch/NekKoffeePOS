@@ -25,6 +25,7 @@ public class InventoryController {
     @FXML private TableColumn<InventoryItem, String> colUnit;
     @FXML private TableColumn<InventoryItem, Double> colMinLevel;
     @FXML private TableColumn<InventoryItem, String> colStatus;
+    @FXML private TableColumn<Order, String> colPhoneNumber;
 
     private ObservableList<InventoryItem> inventoryList = FXCollections.observableArrayList();
     private Connection conn;
@@ -40,6 +41,7 @@ public class InventoryController {
             InventoryItem item = cellData.getValue();
             String status = item.isLowStock() ? "⚠️ LOW STOCK!" : "✅ OK";
             return new javafx.beans.property.SimpleStringProperty(status);
+
         });
 
         try {
